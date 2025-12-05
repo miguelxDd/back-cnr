@@ -39,9 +39,8 @@ public class SecurityConfig {
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Permitir preflight requests primero
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
-                // Swagger UI y OpenAPI
+                // Swagger endpoints
                 .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/api-docs/**").permitAll()
                 // Auth endpoints

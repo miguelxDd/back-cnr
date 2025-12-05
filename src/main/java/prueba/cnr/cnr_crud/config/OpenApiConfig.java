@@ -46,5 +46,5 @@ public class OpenApiConfig {
                                         .scheme("basic")
                                         .description("Autenticación básica HTTP. " +
                                                 "Usuarios de prueba: admin/admin123 o user/user123")));
-    }
+}
 }

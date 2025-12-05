@@ -20,8 +20,8 @@ public class UserContext {
 
     public boolean isAuthenticated() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return authentication != null && authentication.isAuthenticated() 
-               && !"anonymousUser".equals(authentication.getPrincipal());
+        return authentication != null && authentication.isAuthenticated()
+            && !"anonymousUser".equals(authentication.getPrincipal());
     }
 
     public Authentication getAuthentication() {
