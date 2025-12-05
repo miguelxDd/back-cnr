@@ -14,20 +14,22 @@ import org.springframework.web.bind.annotation.*;
 import prueba.cnr.cnr_crud.payload.request.LoginRequest;
 import prueba.cnr.cnr_crud.payload.response.ApiResponse;
 import prueba.cnr.cnr_crud.payload.response.LoginResponse;
+import prueba.cnr.cnr_crud.security.JwtUtils;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/auth")
-@CrossOrigin(origins = "*", maxAge = 3600)
 @Tag(name = "Autenticación", description = "API para autenticación de usuarios")
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final JwtUtils jwtUtils;
 
-    public AuthController(AuthenticationManager authenticationManager) {
+    public AuthController(AuthenticationManager authenticationManager, JwtUtils jwtUtils) {
         this.authenticationManager = authenticationManager;
+        this.jwtUtils = jwtUtils;
     }
 
     @Operation(summary = "Iniciar sesión", description = "Autentica un usuario con sus credenciales")
@@ -47,16 +49,23 @@ public class AuthController {
         );
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+        // Generar JWT
+        String jwt = jwtUtils.generateJwtToken(authentication);
+        System.out.println("JWT generado: " + jwt); // Log para verificar
 
         List<String> roles = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.toList());
 
         LoginResponse loginResponse = new LoginResponse(
+                jwt,
                 authentication.getName(),
                 roles,
                 true
         );
+        
+        System.out.println("Token en LoginResponse: " + loginResponse.getToken()); // Log para verificar
 
         return ResponseEntity.ok(ApiResponse.success("Login exitoso", loginResponse));
     }
@@ -83,6 +92,7 @@ public class AuthController {
                 .collect(Collectors.toList());
 
         LoginResponse response = new LoginResponse(
+                null, // No regeneramos token en /me
                 authentication.getName(),
                 roles,
                 true
